@@ -1,0 +1,75 @@
+def inicializa_tabuleiro():
+    """
+    Inicializa o tabuleiro com valores iguais a 0.
+    """
+    return [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+
+def exibe_tabuleiro(tabuleiro):
+    """
+    Exibe o tabuleiro do jogo da velha.
+    """
+    for linha in tabuleiro:
+        for valor in linha:
+            if valor == 0:
+                print("__", end=" ")
+            elif valor == 1:
+                print("X", end=" ")
+            else:
+                print("O", end=" ")
+        print()
+
+def verifica_vitoria(tabuleiro):
+    """
+    Verifica se alguma linha, coluna ou diagonal foi preenchida.
+    Retorna 1 se o jogador 1 ganhou, -1 se o jogador 2 ganhou, ou 0 se não houve vencedor.
+    """
+    for linha in tabuleiro:
+        if linha.count(1) == 3:
+            return 1
+        elif linha.count(-1) == 3:
+            return -1
+
+    for coluna in range(3):
+        if all(tabuleiro[linha][coluna] == 1 for linha in range(3)):
+            return 1
+        elif all(tabuleiro[linha][coluna] == -1 for linha in range(3)):
+            return -1
+
+    if tabuleiro[0][0] == tabuleiro[1][1] == tabuleiro[2][2] != 0:
+        return tabuleiro[0][0]
+    elif tabuleiro[0][2] == tabuleiro[1][1] == tabuleiro[2][0] != 0:
+        return tabuleiro[0][2]
+
+    return 0
+
+def jogar():
+    tabuleiro = inicializa_tabuleiro()
+    jogada = 0
+
+    while True:
+        exibe_tabuleiro(tabuleiro)
+        jogador = (jogada % 2) + 1
+        print(f"Jogador {jogador}, é sua vez!")
+
+        try:
+            linha = int(input("Digite a linha (1, 2 ou 3): ")) - 1
+            coluna = int(input("Digite a coluna (1, 2 ou 3): ")) - 1
+
+            if tabuleiro[linha][coluna] == 0:
+                tabuleiro[linha][coluna] = 1 if jogador == 1 else -1
+                jogada += 1
+            else:
+                print("Essa posição já está ocupada. Tente novamente.")
+                continue
+
+            vencedor = verifica_vitoria(tabuleiro)
+            if vencedor:
+                exibe_tabuleiro(tabuleiro)
+                print(f"Jogador {vencedor} venceu!")
+                break
+
+        except (ValueError, IndexError):
+            print("Entrada inválida. Digite um número entre 1 e 3.")
+
+if __name__ == "__main__":
+    jogar()
